@@ -1,0 +1,55 @@
+import tkinter as tk
+import smtplib
+import ssl
+from email.message import EmailMessage
+
+def send_email():
+    sender_email = "your_email@example.com"
+    receiver_email = to_entry.get()
+    subject = subject_entry.get()
+    body = body_text.get("1.0", tk.END)
+
+    # Create the email message
+    message = EmailMessage()
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
+    message.set_content(body)
+
+    # Connect to the SMTP server
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.example.com", 465, context=context) as server:
+        server.login(sender_email, "your_email_password")
+        server.send_message(message)
+
+    # Clear the input fields after sending
+    to_entry.delete(0, tk.END)
+    subject_entry.delete(0, tk.END)
+    body_text.delete("1.0", tk.END)
+
+# Create the main application window
+app = tk.Tk()
+app.title("Mail Application")
+
+# Labels
+to_label = tk.Label(app, text="To:")
+to_label.pack()
+subject_label = tk.Label(app, text="Subject:")
+subject_label.pack()
+
+# Entry fields
+to_entry = tk.Entry(app, width=50)
+to_entry.pack()
+subject_entry = tk.Entry(app, width=50)
+subject_entry.pack()
+
+# Text area for the email body
+body_text = tk.Text(app, width=80, height=20)
+body_text.pack()
+
+# Send button
+send_button = tk.Button(app, text="Send", command=send_email)
+send_button.pack()
+
+# Run the application
+app.mainloop()
